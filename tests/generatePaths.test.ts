@@ -91,6 +91,20 @@ describe("generatePaths", () => {
     expect(content).not.toContain("@analytics");
   });
 
+  it("should skip private folders", () => {
+    generatePaths({
+      appDir,
+      envKey: "NEXT_PUBLIC_TEST_URL",
+      caseStyle: "camelCase",
+      outputDir,
+    });
+
+    const content = readFileSync(outputFile, "utf-8");
+    // Private folders and their subfolders are opted out of routing
+    expect(content).not.toContain("_components");
+    expect(content).not.toContain("nested");
+  });
+
   it("should handle multiple HTTP methods", () => {
     generatePaths({
       appDir,
