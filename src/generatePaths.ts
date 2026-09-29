@@ -6,6 +6,7 @@
  *
  * ▸ Static, dynamic (`[id]`), optional dynamic (`[[id]]`, `[[...slug]]`)
  * ▸ Invisible route groups `(group)` + parallel slots `@slot`
+ * ▸ Private folders `_folder` are skipped with everything below them
  * ▸ Deep‑merge when `page.*` and `route.*` coexist
  * ▸ `page.*` exposes `{ path, url, URL }`
  * ▸ Each exported HTTP handler in `route.*` exposes the same trio
@@ -113,6 +114,9 @@ function scanDir(dir: string, style: CaseStyle): Segment[] {
     if (name === "api") continue;
     const full = path.join(dir, name);
     const stats = statSync(full);
+
+    // private folders `_folder` are opted out of routing
+    if (stats.isDirectory() && name.startsWith("_")) continue;
 
     // route groups or parallel slots are URL‑invisible
     if (
